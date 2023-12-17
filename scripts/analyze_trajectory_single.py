@@ -27,6 +27,7 @@ def analyze_multiple_trials(results_dir, est_type, n_trials,
                             preset_boxplot_distances=[],
                             preset_boxplot_percentages=[0.1, 0.2, 0.3, 0.4, 0.5],
                             compute_odometry_error=True, 
+                            max_diff=0.02,
                             unknown_gt_rot=False):
     traj_list = []
     mt_error = MulTrajError()
@@ -50,6 +51,7 @@ def analyze_multiple_trials(results_dir, est_type, n_trials,
             nm_matches=match_base_fn,
             preset_boxplot_distances=preset_boxplot_distances,
             preset_boxplot_percentages=preset_boxplot_percentages,
+            max_diff=max_diff,
             unknown_gt_rot=unknown_gt_rot)
         if traj.data_loaded:
             traj.compute_absolute_error()
@@ -95,6 +97,10 @@ if __name__ == '__main__':
         default=['traj_est'])
     parser.add_argument('--recalculate_errors',
                         help='Deletes cached errors', action='store_true')
+    parser.add_argument('--max_diff', type=float,
+                        help=('max time difference for matching [s], default: %(default)s. ',
+                        'Set this value to no more than half of the ground truth sampling interval.'),
+                        default=0.02)
     parser.add_argument('--unknown_gt_rot',
                         help='whether the ground truth rotation is unknown',
                         action='store_true')
@@ -157,7 +163,9 @@ if __name__ == '__main__':
               "#### Processing error type {0} ####".format(est_type_i))
         mt_error = MulTrajError()
         traj_list, mt_error = analyze_multiple_trials(
-            args.result_dir, est_type_i, n_trials, args.recalculate_errors, unknown_gt_rot=args.unknown_gt_rot)
+            args.result_dir, est_type_i, n_trials, args.recalculate_errors, 
+            max_diff=args.max_diff,
+            unknown_gt_rot=args.unknown_gt_rot)
         if traj_list:
             plot_traj = traj_list[args.mul_plot_idx[0]]
         else:

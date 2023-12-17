@@ -418,6 +418,10 @@ if __name__ == '__main__':
 
     parser.add_argument('--recalculate_errors',
                         help='Deletes cached errors', action='store_true')
+    parser.add_argument('--max_diff', type=float,
+                        help=('max time difference for matching [s], default: %(default)s. ',
+                        'Set this value to no more than half of the ground truth sampling interval.'),
+                        default=0.02)
     parser.add_argument('--unknown_gt_rot',
                         help='Is the ground truth rotation unknown', action='store_true')
     parser.add_argument('--png',
@@ -517,6 +521,7 @@ if __name__ == '__main__':
                 preset_boxplot_distances=dataset_boxdist_map[d],
                 preset_boxplot_percentages=rel_e_perc,
                 compute_odometry_error=need_odometry_error,
+                max_diff=args.max_diff,
                 unknown_gt_rot=args.unknown_gt_rot)
             if not dataset_boxdist_map[d] and traj_list:
                 print("Assign the boxplot distances for {0}...".format(d))

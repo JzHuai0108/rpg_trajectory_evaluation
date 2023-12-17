@@ -33,6 +33,7 @@ class Trajectory:
                  nm_matches='stamped_est_gt_matches.txt',
                  preset_boxplot_distances=[],
                  preset_boxplot_percentages=[],
+                 max_diff=0.02,
                  unknown_gt_rot=False):
 
         assert os.path.exists(results_dir),\
@@ -102,7 +103,7 @@ class Trajectory:
             self.rel_error_cached_nm+self.suffix_str+".pickle")
 
         print("Loading {0} and {1}...".format(nm_gt, nm_est))
-        self.data_loaded = self.load_data(nm_gt, nm_est, nm_matches)
+        self.data_loaded = self.load_data(nm_gt, nm_est, nm_matches, max_diff)
         if not self.data_loaded:
             print(Fore.RED+"Loading data failed.")
             return
@@ -119,7 +120,7 @@ class Trajectory:
 
         self.align_trajectory()
 
-    def load_data(self, nm_gt, nm_est, nm_matches):
+    def load_data(self, nm_gt, nm_est, nm_matches, max_diff):
         """
         Loads the trajectory data. The resuls {p_es, q_es, p_gt, q_gt} is
         synchronized and has the same length.
@@ -137,6 +138,7 @@ class Trajectory:
                 self.data_dir, nm_gt, nm_est,
                 os.path.join(Trajectory.saved_res_dir_nm, self.est_type,
                              nm_matches),
+                max_diff = max_diff,
                 start_t_sec=self.start_time_sec, end_t_sec=self.end_time_sec)
         self.t_gt_raw, self.p_gt_raw, self.q_gt_raw =\
             traj_loading.load_raw_groundtruth(self.data_dir, nm_gt,
