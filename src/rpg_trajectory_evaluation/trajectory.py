@@ -32,7 +32,8 @@ class Trajectory:
                  nm_est='stamped_traj_estimate.txt',
                  nm_matches='stamped_est_gt_matches.txt',
                  preset_boxplot_distances=[],
-                 preset_boxplot_percentages=[]):
+                 preset_boxplot_percentages=[],
+                 unknown_gt_rot=False):
 
         assert os.path.exists(results_dir),\
             "Specified directory {0} does not exist.".format(results_dir)
@@ -47,6 +48,7 @@ class Trajectory:
         self.est_type = est_type
         self.suffix_str = self.get_suffix_str(suffix)
         self.success = False
+        self.unknown_gt_rot = unknown_gt_rot
 
         self.data_dir = results_dir
         self.data_loaded = False
@@ -340,7 +342,7 @@ class Trajectory:
                 traj_err.compute_relative_error(
                     self.p_es, self.q_es, self.p_gt, self.q_gt, Tcm,
                     subtraj_len, max_dist_diff, self.accum_distances,
-                    self.scale)
+                    self.rot, self.scale, self.unknown_gt_rot)
             dist_rel_err = {'rel_trans': e_trans,
                             'rel_trans_stats':
                             res_writer.compute_statistics(e_trans),

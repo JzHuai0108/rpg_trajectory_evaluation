@@ -418,6 +418,8 @@ if __name__ == '__main__':
 
     parser.add_argument('--recalculate_errors',
                         help='Deletes cached errors', action='store_true')
+    parser.add_argument('--unknown_gt_rot',
+                        help='Is the ground truth rotation unknown', action='store_true')
     parser.add_argument('--png',
                         help='Save plots as png instead of pdf',
                         action='store_true')
@@ -427,7 +429,7 @@ if __name__ == '__main__':
                         plot_trajectories=False, rmse_boxplot=False,
                         recalculate_errors=False, png=False, time_statistics=False,
                         sort_names=True, plot_side=True, plot_aligned=True,
-                        plot_traj_per_alg=True, rmse_median_only=False)
+                        plot_traj_per_alg=True, rmse_median_only=False, unknown_gt_rot=False)
     args = parser.parse_args()
     print("Arguments:\n{}".format(
         '\n'.join(['- {}: {}'.format(k, v)
@@ -514,7 +516,8 @@ if __name__ == '__main__':
                 recalculate_errors=args.recalculate_errors,
                 preset_boxplot_distances=dataset_boxdist_map[d],
                 preset_boxplot_percentages=rel_e_perc,
-                compute_odometry_error=need_odometry_error)
+                compute_odometry_error=need_odometry_error,
+                unknown_gt_rot=args.unknown_gt_rot)
             if not dataset_boxdist_map[d] and traj_list:
                 print("Assign the boxplot distances for {0}...".format(d))
                 dataset_boxdist_map[d] = traj_list[0].preset_boxplot_distances

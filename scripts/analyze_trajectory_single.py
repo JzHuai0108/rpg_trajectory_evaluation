@@ -26,7 +26,8 @@ def analyze_multiple_trials(results_dir, est_type, n_trials,
                             recalculate_errors=False,
                             preset_boxplot_distances=[],
                             preset_boxplot_percentages=[0.1, 0.2, 0.3, 0.4, 0.5],
-                            compute_odometry_error=True):
+                            compute_odometry_error=True, 
+                            unknown_gt_rot=False):
     traj_list = []
     mt_error = MulTrajError()
     for trial_i in range(n_trials):
@@ -48,7 +49,8 @@ def analyze_multiple_trials(results_dir, est_type, n_trials,
             nm_est=kNsToEstFnMapping[est_type] + suffix + '.'+kFnExt,
             nm_matches=match_base_fn,
             preset_boxplot_distances=preset_boxplot_distances,
-            preset_boxplot_percentages=preset_boxplot_percentages)
+            preset_boxplot_percentages=preset_boxplot_percentages,
+            unknown_gt_rot=unknown_gt_rot)
         if traj.data_loaded:
             traj.compute_absolute_error()
             if compute_odometry_error:
@@ -93,6 +95,9 @@ if __name__ == '__main__':
         default=['traj_est'])
     parser.add_argument('--recalculate_errors',
                         help='Deletes cached errors', action='store_true')
+    parser.add_argument('--unknown_gt_rot',
+                        help='whether the ground truth rotation is unknown',
+                        action='store_true')
     parser.add_argument('--png',
                         help='Save plots as png instead of pdf',
                         action='store_true')
@@ -152,7 +157,7 @@ if __name__ == '__main__':
               "#### Processing error type {0} ####".format(est_type_i))
         mt_error = MulTrajError()
         traj_list, mt_error = analyze_multiple_trials(
-            args.result_dir, est_type_i, n_trials, args.recalculate_errors)
+            args.result_dir, est_type_i, n_trials, args.recalculate_errors, unknown_gt_rot=args.unknown_gt_rot)
         if traj_list:
             plot_traj = traj_list[args.mul_plot_idx[0]]
         else:

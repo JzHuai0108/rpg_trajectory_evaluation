@@ -8,8 +8,8 @@ import transformations as tf
 
 
 def compute_relative_error(p_es, q_es, p_gt, q_gt, T_cm, dist, max_dist_diff,
-                           accum_distances=[],
-                           scale=1.0):
+                           accum_distances=[], rot=np.eye(3),
+                           scale=1.0, unknown_gt_rot=False):
 
     if len(accum_distances) == 0:
         accum_distances = tu.get_distance_from_start(p_gt)
@@ -42,6 +42,10 @@ def compute_relative_error(p_es, q_es, p_gt, q_gt, T_cm, dist, max_dist_diff,
             T_c2_rot[0:3, 0:3] = T_c2[0:3, 0:3]
             T_error_in_w = np.dot(T_c2_rot, np.dot(
                 T_error_in_c2, np.linalg.inv(T_c2_rot)))
+            if unknown_gt_rot:
+                # when the ground truth rotation is unknown, we assume the estimated rotations are as perfect as gt rotations.
+                # but there is still a relative transform between the world frames of the two trajectories.
+                T_error_in_w[:3, 3] = rot.dot(T_c2[:3, 3] - T_c1[:3, 3]) * scale - (T_m2[:3, 3] - T_m1[:3, 3])
             errors.append(T_error_in_w)
 
     error_trans_norm = []
