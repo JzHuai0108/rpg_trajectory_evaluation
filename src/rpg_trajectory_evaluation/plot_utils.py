@@ -4,15 +4,22 @@
 """
 
 import os
+import shutil
 import yaml
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import matplotlib.lines as mlines
 from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import rc
-rc('font', **{'family': 'serif', 'serif': ['Cardo']})
-rc('text', usetex=True)
+from matplotlib import rc, rcParams
+
+# disable LaTeX if it's not present (or just force False)
+if not shutil.which('latex'):
+    rc('text', usetex=False)
+
+rc('font', family='serif')          # still prefer serif
+rcParams['font.serif'] = ['Cardo', 'DejaVu Serif', 'Times New Roman']
+rcParams['mathtext.fontset'] = 'stix'   # nice math without TeX
 
 FORMAT = '.pdf'
 

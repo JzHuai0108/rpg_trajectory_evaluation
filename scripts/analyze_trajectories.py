@@ -9,7 +9,7 @@ from datetime import datetime
 
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import rc
+from matplotlib import rc, rcParams
 from colorama import init, Fore
 
 import add_path
@@ -21,8 +21,13 @@ from fn_constants import kNsToEstFnMapping, kNsToMatchFnMapping, kFnExt
 
 init(autoreset=True)
 
-rc('font', **{'family': 'serif', 'serif': ['Cardo']})
-rc('text', usetex=True)
+# disable LaTeX if it's not present (or just force False)
+if not shutil.which('latex'):
+    rc('text', usetex=False)
+
+rc('font', family='serif')          # still prefer serif
+rcParams['font.serif'] = ['Cardo', 'DejaVu Serif', 'Times New Roman']
+rcParams['mathtext.fontset'] = 'stix'   # nice math without TeX
 
 FORMAT = '.pdf'
 
@@ -323,7 +328,7 @@ def parse_config_file(config_fn, sort_names):
         d = yaml.load(f)
     datasets = d['Datasets'].keys()
     if sort_names:
-        datasets = sorted(datasets)
+        datasets = sorted(datasets, key=str)
     datasets_labels = {}
     datasets_titles = {}
     for v in datasets:

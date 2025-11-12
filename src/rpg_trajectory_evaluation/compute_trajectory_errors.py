@@ -84,10 +84,32 @@ def compute_absolute_error(p_es_aligned, q_es_aligned, p_gt, q_gt):
         e_rot[i] = np.rad2deg(np.linalg.norm(tf.logmap_so3(e_R[:3, :3])))
 
     # scale drift
-    motion_gt = np.diff(p_gt, 0)
-    motion_es = np.diff(p_es_aligned, 0)
-    dist_gt = np.sqrt(np.sum(np.multiply(motion_gt, motion_gt), 1))
-    dist_es = np.sqrt(np.sum(np.multiply(motion_es, motion_es), 1))
-    e_scale_perc = np.abs((np.divide(dist_es, dist_gt)-1.0) * 100)
+    eps = 1e-6
+    motion_gt = np.diff(p_gt, axis=0)               # shape (N-1, 3)
+    motion_es = np.diff(p_es_aligned, axis=0)       # shape (N-1, 3)
 
+    # per-step distances
+    dist_gt = np.linalg.norm(motion_gt, axis=1)     # (N-1,)
+    dist_es = np.linalg.norm(motion_es, axis=1)     # (N-1,)
+
+    # debug if any zero/small GT steps
+    bad = np.where(dist_gt <= eps)[0]               # indices into motion_* arrays
+    if bad.size:
+        print(f"[DEBUG] Found {bad.size} GT steps <= {eps} (possible duplicates / stationary frames).")
+        # show up to K problematic steps with context
+        K = 10
+        for i in bad[:K]:
+            # motion index i corresponds to pose pair (i, i+1) in p_gt
+            print(f"  - step {i} -> {i+1}: dist_gt={dist_gt[i]:.9e}, dist_es={dist_es[i]:.9e}")
+            print(f"    motion_gt[{i}] = {motion_gt[i]}")
+            print(f"    motion_es[{i}] = {motion_es[i]}")
+            print(f"    p_gt[{i}]      = {p_gt[i]}")
+            print(f"    p_gt[{i+1}]    = {p_gt[i+1]}")
+        if bad.size > K:
+            print(f"  ... ({bad.size-K} more)")
+
+    # safe scale error
+    valid = dist_gt > eps
+    e_scale_perc = np.full(dist_gt.shape, np.nan, dtype=float)
+    e_scale_perc[valid] = np.abs((dist_es[valid] / dist_gt[valid] - 1.0) * 100.0)
     return e_trans, e_trans_vec, e_rot, e_ypr, e_scale_perc

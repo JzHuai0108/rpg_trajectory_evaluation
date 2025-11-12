@@ -2,10 +2,11 @@
 
 import os
 import argparse
+import shutil
 
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import rc
+from matplotlib import rc, rcParams
 import matplotlib
 from colorama import init, Fore
 
@@ -16,8 +17,14 @@ from fn_constants import kNsToEstFnMapping, kNsToMatchFnMapping, kFnExt
 from multiple_traj_errors import MulTrajError
 
 init(autoreset=True)
-rc('font', **{'family': 'serif', 'serif': ['Cardo']})
-rc('text', usetex=True)
+
+# disable LaTeX if it's not present (or just force False)
+if not shutil.which('latex'):
+    rc('text', usetex=False)
+
+rc('font', family='serif')          # still prefer serif
+rcParams['font.serif'] = ['Cardo', 'DejaVu Serif', 'Times New Roman']
+rcParams['mathtext.fontset'] = 'stix'   # nice math without TeX
 
 FORMAT = '.pdf'
 
@@ -156,7 +163,7 @@ if __name__ == '__main__':
               "We will plot trials {0}.".format(args.mul_plot_idx))
     else:
         args.mul_plot_idx = [0]
-    assert len(args.mul_plot_idx) is 1, "Multiple plots not supported yet"
+    assert len(args.mul_plot_idx) == 1, "Multiple plots not supported yet"
 
     for est_type_i, plot_dir_i in zip(args.est_types, plots_dirs):
         print(Fore.RED +
