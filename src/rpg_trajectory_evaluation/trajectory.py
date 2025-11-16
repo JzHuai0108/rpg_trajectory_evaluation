@@ -130,7 +130,7 @@ class Trajectory:
             print(Fore.RED+"Either groundtruth or estimate does not exist")
             return False
 
-        print(Fore.RED+'Loading trajectory data...')
+        print(Fore.RED + f'Loading trajectory data from {self.data_dir} (max diff {max_diff})')
 
         # only timestamped pose series is supported
         self.t_es, self.p_es, self.q_es, self.t_gt, self.p_gt, self.q_gt =\
@@ -172,7 +172,7 @@ class Trajectory:
 
     @staticmethod
     def get_suffix_str(suffix):
-        if suffix is not '':
+        if suffix:
             return "_#"+suffix
         else:
             return suffix

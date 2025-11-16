@@ -136,9 +136,14 @@ class MulTrajError(object):
 
     def cache_current_error(self):
         if self.abs_errors:
+            if self.align_str:
+                filename = f'mt_cached_abs_err_{self.align_str}.pickle'
+            else:
+                print(f'[WARN] align_str is empty (value={self.align_str}). '
+                    f'This may happen if some sequences have zero GT–EST matches.')
+                filename = 'mt_cached_abs_err.pickle'
             with open(os.path.join(self.cache_results_dir,
-                                   'mt_cached_abs_err_' +
-                                   self.align_str+'.pickle'), 'wb') as f:
+                                   filename), 'wb') as f:
                 pickle.dump(self.abs_errors, f)
         if self.rel_errors:
             with open(os.path.join(self.cache_results_dir,
