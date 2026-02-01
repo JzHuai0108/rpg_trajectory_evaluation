@@ -239,7 +239,7 @@ if __name__ == '__main__':
 
         fig = plt.figure(figsize=(8, 2.5))
         ax = fig.add_subplot(
-            111, xlabel='Distance [m]', ylabel='Scale Drift [\%]',
+            111, xlabel='Distance [m]', ylabel='Scale Drift [%]',
             xlim=[0, plot_traj.accum_distances[-1]])
         pu.plot_error_n_dim(
             ax, plot_traj.accum_distances,
@@ -301,7 +301,7 @@ if __name__ == '__main__':
         fig = plt.figure(figsize=(6, 2.5))
         ax = fig.add_subplot(
             111, xlabel='Distance traveled [m]',
-            ylabel='Translation error [\%]')
+            ylabel='Translation error [%]')
         pu.boxplot_compare(
             ax, distances, rel_errors['rel_trans_perc'], labels, colors)
         fig.tight_layout()

@@ -108,7 +108,7 @@ def plot_odometry_error_per_dataset(dataset_rel_err, dataset_names, algorithm_na
         fig = plt.figure(figsize=(12, 3))
         ax = fig.add_subplot(
             121, xlabel='Distance traveled (m)',
-            ylabel='Translation error (\%)')
+            ylabel='Translation error (%)')
         pu.boxplot_compare(ax, distances, [rel_err['trans_err_perc'][v] for v in algorithm_names],
                            config_labels, config_colors, legend=False)
         ax = fig.add_subplot(
@@ -292,7 +292,7 @@ def plot_overall_odometry_errors(odo_err_col, algorithm_names, rel_e_distances,
                                  plot_settings, output_dir):
     for et in odo_err_col:
         if et == 'rel_trans_perc':
-            ylabel = 'Translation error (\%)'
+            ylabel = 'Translation error (%)'
         elif et == 'rel_rot_deg_per_m':
             ylabel = 'Rotation error (deg / m)'
         else:
@@ -326,7 +326,7 @@ def parse_config_file(config_fn, sort_names):
     yaml = YAML()
     with open(config_fn) as f:
         d = yaml.load(f)
-    datasets = d['Datasets'].keys()
+    datasets = list(d['Datasets'].keys())
     if sort_names:
         datasets = sorted(datasets, key=str)
     datasets_labels = {}
@@ -336,9 +336,9 @@ def parse_config_file(config_fn, sort_names):
         if 'title' in d['Datasets'][v]:
             datasets_titles[v] = d['Datasets'][v]['title']
 
-    algorithms = d['Algorithms'].keys()
+    algorithms = list(d['Algorithms'].keys())
     if sort_names:
-        algorithms = sorted(algorithms)
+        algorithms = sorted(algorithms, key=str)
     alg_labels = {}
     alg_fn = {}
     for v in algorithms:
@@ -467,8 +467,8 @@ if __name__ == '__main__':
     assert len(PALLETE) > len(algorithms),\
         "Not enough colors for all configurations"
     algo_colors = {}
-    for i in range(len(algorithms)):
-        algo_colors[algorithms[i]] = PALLETE[i]
+    for algo, color in zip(algorithms, PALLETE):
+        algo_colors[algo] = color
 
     print(Fore.YELLOW+"=== Evaluation Configuration Summary ===")
     print(Fore.YELLOW+"Datasests to evaluate: ")
@@ -610,7 +610,7 @@ if __name__ == '__main__':
     print(Fore.RED+">>> Collecting odometry errors per algorithms...")
     if args.overall_odometry_error:
         rel_err_names = ['rel_trans_perc', 'rel_rot_deg_per_m']
-        rel_err_labels = ['Translation (\%)', 'Rotation (deg/meter)']
+        rel_err_labels = ['Translation (%)', 'Rotation (deg/meter)']
         all_odo_err = collect_odometry_error_per_algorithm(
             config_multierror_list, algorithms, rel_e_distances, rel_keys=rel_err_names)
         print(Fore.MAGENTA+'--- Plotting and writing overall odometry errors... ---')
