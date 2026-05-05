@@ -126,7 +126,7 @@ def plot_overall_odometry_errors(overall_err, output_dir):
     # absolute error
     fig = plt.figure(figsize=(6, 2.5))
     ax = fig.add_subplot(
-        111, xlabel='Distance traveled [m]', ylabel='Translation error [m]')
+        111, xlabel='Distance traveled (m)', ylabel='Translation error [m]')
     pu.boxplot_compare(ax, overall_err['distances'],
                        overall_err['trans_err'].values(),
                        config_labels, config_colors)
@@ -138,7 +138,7 @@ def plot_overall_odometry_errors(overall_err, output_dir):
     # relative error
     fig = plt.figure(figsize=(6, 2.5))
     ax = fig.add_subplot(
-        111, xlabel='Distance traveled [m]', ylabel='Translation error [%]')
+        111, xlabel='Distance traveled (m)', ylabel='Translation error [%]')
     pu.boxplot_compare(ax, overall_err['distances'],
                        overall_err['trans_err_perc'].values(),
                        config_labels, config_colors)
@@ -150,7 +150,7 @@ def plot_overall_odometry_errors(overall_err, output_dir):
     # yaw orientation error
     fig = plt.figure(figsize=(6, 2.5))
     ax = fig.add_subplot(
-        111, xlabel='Distance traveled [m]', ylabel='Yaw error [deg]')
+        111, xlabel='Distance traveled (m)', ylabel='Yaw error [deg]')
     pu.boxplot_compare(ax, overall_err['distances'],
                        overall_err['yaw_err'].values(),
                        config_labels, config_colors)

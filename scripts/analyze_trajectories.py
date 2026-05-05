@@ -112,7 +112,7 @@ def plot_odometry_error_per_dataset(dataset_rel_err, dataset_names, algorithm_na
         pu.boxplot_compare(ax, distances, [rel_err['trans_err_perc'][v] for v in algorithm_names],
                            config_labels, config_colors, legend=False)
         ax = fig.add_subplot(
-            122, xlabel='Distance traveled (m)', ylabel='Rotation error (deg / m)')
+            122, xlabel='Distance traveled (m)', ylabel=r'Rotation error ($^\circ$/m)')
         pu.boxplot_compare(ax, distances, [rel_err['rot_deg_per_m'][v] for v in algorithm_names],
                            config_labels, config_colors, legend=True)
         fig.tight_layout()
@@ -294,7 +294,7 @@ def plot_overall_odometry_errors(odo_err_col, algorithm_names, rel_e_distances,
         if et == 'rel_trans_perc':
             ylabel = 'Translation error (%)'
         elif et == 'rel_rot_deg_per_m':
-            ylabel = 'Rotation error (deg / m)'
+            ylabel = r'Rotation error ($^\circ$/m)'
         else:
             assert False
         cur_err = odo_err_col[et]
@@ -313,7 +313,7 @@ def plot_overall_odometry_errors(odo_err_col, algorithm_names, rel_e_distances,
 
         fig = plt.figure(figsize=(12, 3))
         ax = fig.add_subplot(
-            111, xlabel='Distance traveled [m]', ylabel=ylabel)
+            111, xlabel='Distance traveled (m)', ylabel=ylabel)
         pu.boxplot_compare(ax, distances, errors,
                            labels, colors, legend=True)
         fig.tight_layout()
@@ -385,8 +385,8 @@ if __name__ == '__main__':
     parser.add_argument(
         '--mul_trials', type=int,
         help='number of trials, None for single run', default=None)
-    parser.add_argument('--no_sort_names', action='store_false', dest='sort_names',
-                        help='whether to sort dataset and algorithm names')
+    parser.add_argument('--sort_names', action='store_true', dest='sort_names',
+                        help='sort dataset and algorithm names alphabetically (default: preserve YAML order)')
 
     # odometry error
     parser.add_argument(
@@ -437,7 +437,7 @@ if __name__ == '__main__':
                         rmse_table=False,
                         plot_trajectories=False, rmse_boxplot=False,
                         recalculate_errors=False, png=False, time_statistics=False,
-                        sort_names=True, plot_side=True, plot_aligned=True,
+                        sort_names=False, plot_side=True, plot_aligned=True,
                         plot_traj_per_alg=True, rmse_median_only=False, unknown_gt_rot=False)
     args = parser.parse_args()
     print("Arguments:\n{}".format(
@@ -610,7 +610,7 @@ if __name__ == '__main__':
     print(Fore.RED+">>> Collecting odometry errors per algorithms...")
     if args.overall_odometry_error:
         rel_err_names = ['rel_trans_perc', 'rel_rot_deg_per_m']
-        rel_err_labels = ['Translation (%)', 'Rotation (deg/meter)']
+        rel_err_labels = ['Translation (%)', r'Rotation ($^\circ$/m)']
         all_odo_err = collect_odometry_error_per_algorithm(
             config_multierror_list, algorithms, rel_e_distances, rel_keys=rel_err_names)
         print(Fore.MAGENTA+'--- Plotting and writing overall odometry errors... ---')

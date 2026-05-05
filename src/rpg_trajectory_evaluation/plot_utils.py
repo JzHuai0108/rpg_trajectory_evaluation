@@ -40,29 +40,37 @@ def boxplot_compare(ax, xlabels,
     n_xlabel = len(xlabels)
     leg_handles = []
     leg_labels = []
-    idx = 0
+
+    # w chosen so the tick aligns with the center box (idx = (n_data-1)/2):
+    # pos - 0.5 + 1.5*w + ((n_data-1)/2)*w == pos  =>  w = 1/(n_data+2)
+    w = 1.0 / (n_data + 2)
+
     for idx, d in enumerate(data):
-        # print("idx and d: {0} and {1}".format(idx, d))
-        w = 1 / (1.5 * n_data + 1.5)
-        widths = [w for pos in np.arange(n_xlabel)]
+        widths = [w] * n_xlabel
         positions = [pos - 0.5 + 1.5 * w + idx * w
                      for pos in np.arange(n_xlabel)]
-        # print("Positions: {0}".format(positions))
         bp = ax.boxplot(d, 0, '', positions=positions, widths=widths)
         color_box(bp, data_colors[idx])
         leg_line = mlines.Line2D([], [], color=data_colors[idx])
         leg_handles.append(leg_line)
         leg_labels.append(data_labels[idx])
-        idx += 1
 
     ax.set_xticks(np.arange(n_xlabel))
-    ax.set_xticklabels(xlabels)
-    xlims = ax.get_xlim()
-    ax.set_xlim([xlims[0]-0.1, xlims[1]-0.1])
+    ax.set_xticklabels(xlabels, fontsize=13)
+    ax.tick_params(axis='y', labelsize=13)
+    ax.xaxis.label.set_size(14)
+    ax.yaxis.label.set_size(14)
+
+    # tight xlim: small margin around the outermost box edges
+    margin = 0.5 * w
+    ax.set_xlim([-0.5 + 0.5 * w - margin,
+                 (n_xlabel - 1) - 0.5 + (n_data + 1.5) * w + margin])
+
+    ax.yaxis.grid(True, linestyle='--', color='0.7', zorder=0)
+    ax.set_axisbelow(True)
+
     if legend:
-        # ax.legend(leg_handles, leg_labels, bbox_to_anchor=(
-            # 1.05, 1), loc=2, borderaxespad=0.)
-        ax.legend(leg_handles, leg_labels)
+        ax.legend(leg_handles, leg_labels, fontsize=12)
     map(lambda x: x.set_visible(False), leg_handles)
 
 
